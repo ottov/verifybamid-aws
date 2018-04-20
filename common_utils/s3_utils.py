@@ -68,3 +68,16 @@ def upload_file(s3_path, local_path):
     response = s3.Object(bucket, key).upload_file(local_path, ExtraArgs=dict(ServerSideEncryption='AES256'))
 
     return response
+
+def get_size(s3_path):
+    """
+    Retrieves s3 object size in bytes
+    :param s3_path: s3 object path
+    :return: size in byts
+    """
+    bucket = s3_path.split('/')[2]
+    key = '/'.join(s3_path.split('/')[3:])
+
+    object_name = key.split('/')[-1]
+
+    return s3.Object(bucket, key).content_length

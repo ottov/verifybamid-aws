@@ -7,7 +7,7 @@ import shlex
 import subprocess
 from argparse import ArgumentParser
 
-from common_utils.s3_utils import download_file, upload_file
+from common_utils.s3_utils import download_file, upload_file, get_size
 from common_utils.job_utils import generate_working_dir, delete_working_dir
 
 
@@ -34,7 +34,7 @@ def run_verifybamid_basic(vcf_path, bam_path, bai_path, cmd_args, working_dir):
     #output=subprocess.check_output(cmd, shell=True)
 
     return results_prefix
-
+ 
 
 def main():
     argparser = ArgumentParser()
@@ -53,6 +53,16 @@ def main():
     args = argparser.parse_args()
 
     working_dir = generate_working_dir(args.working_dir)
+
+    total_size = 0
+    for obj in []:
+        total_size += get_size(obj)
+
+    print("Total Size := {0}".format(total_size) )
+
+    # Declare expected disk usage
+    with open("/TOTAL_SIZE", "w") as text_file:
+       text_file.write("{0}".format(total_size))
 
     print("Downloading vcf")
     local_vcf_path = download_file(args.vcf_s3_path, working_dir)
