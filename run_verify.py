@@ -22,16 +22,16 @@ def run_verifybamid_basic(vcf_path, bam_path, bai_path, cmd_args, working_dir):
     """
     results_prefix = os.path.join(working_dir, 'data-out')
 
-    #cmd = 'verifyBamID --vcf %s --bam %s --bai %s --out %s ' % (vcf_path, bam_path, bai_path, results_prefix)
-    cmd = 'aws s3 cp %s - | ' % (bam_path)
-    cmd += 'verifyBamID --vcf %s --bam -.bam --bai %s --out %s ' % (vcf_path, bai_path, results_prefix)
+    cmd = 'verifyBamID --vcf %s --bam %s --bai %s --out %s ' % (vcf_path, bam_path, bai_path, results_prefix)
+    #cmd = 'aws s3 cp %s - | ' % (bam_path)
+    #cmd += 'verifyBamID --vcf %s --bam -.bam --bai %s --out %s ' % (vcf_path, bai_path, results_prefix)
     cmd += ' '.join(map(lambda x : ' --' + x.replace("'",''), cmd_args))
 
     print('Running cmd:= ', end='')
     print(cmd)
 
-    #subprocess.check_call(shlex.split(cmd))
-    output=subprocess.check_output(cmd, shell=True)
+    subprocess.check_call(shlex.split(cmd))
+    #output=subprocess.check_output(cmd, shell=True)
 
     return results_prefix
 
@@ -58,9 +58,9 @@ def main():
     local_vcf_path = download_file(args.vcf_s3_path, working_dir)
     print("VCF downloaded to %s" % local_vcf_path)
 
-#    print("Downloading bam")
-#    local_bam_path = download_file(args.bam_s3_path, working_dir)
-#    print("BAM downloaded to %s" % local_bam_path)
+    print("Downloading bam")
+    local_bam_path = download_file(args.bam_s3_path, working_dir)
+    print("BAM downloaded to %s" % local_bam_path)
 
     print("Downloading bam index")
     local_bam_index_path = download_file(args.bai_s3_path, working_dir)
@@ -69,7 +69,7 @@ def main():
     print ("Running verifybamid")
     local_stats_path = run_verifybamid_basic(
                            local_vcf_path,
-                           args.bam_s3_path,
+                           local_bam_path,
                            local_bam_index_path,
                            args.opt_list,
                            working_dir)
