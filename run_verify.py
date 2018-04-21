@@ -55,7 +55,7 @@ def main():
     working_dir = generate_working_dir(args.working_dir)
 
     total_size = 0
-    for obj in []:
+    for obj in [args.vcf_s3_path, args.bam_s3_path, args.bai_s3_path]:
         total_size += get_size(obj)
 
     print("Total Size := {0}".format(total_size) )
