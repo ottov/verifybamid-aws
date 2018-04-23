@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import os
 import os.path
+import time
 import shlex
 import subprocess
 from argparse import ArgumentParser
@@ -34,7 +35,7 @@ def run_verifybamid_basic(vcf_path, bam_path, bai_path, cmd_args, working_dir):
     #output=subprocess.check_output(cmd, shell=True)
 
     return results_prefix
- 
+
 
 def main():
     argparser = ArgumentParser()
@@ -48,7 +49,7 @@ def main():
     run_group = argparser.add_argument_group(title='Run command args')
     run_group.add_argument('--cmd_args', type=str, help='Additional Arguments', default=None, nargs='*', action='store', dest='opt_list')
 
-    argparser.add_argument('--working_dir', type=str, default='/')
+    argparser.add_argument('--working_dir', type=str, default='/scratch')
 
     args = argparser.parse_args()
 
@@ -60,9 +61,17 @@ def main():
 
     print("Total Size := {0}".format(total_size) )
 
-    # Declare expected disk usage
+    # Declare expected disk usage, triggers host's EBS script (ecs-ebs-manager)
     with open("/TOTAL_SIZE", "w") as text_file:
        text_file.write("{0}".format(total_size))
+
+    # Wait for EBS to appear
+    while not os.path.isdir("/scratch"):
+       time.sleep(5)
+
+    # Wait for mount verification
+    while not os.path.ismount('/scratch'):
+       time.sleep(1)
 
     print("Downloading vcf")
     local_vcf_path = download_file(args.vcf_s3_path, working_dir)
