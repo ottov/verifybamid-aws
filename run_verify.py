@@ -49,11 +49,9 @@ def main():
     run_group = argparser.add_argument_group(title='Run command args')
     run_group.add_argument('--cmd_args', type=str, help='Additional Arguments', default=None, nargs='*', action='store', dest='opt_list')
 
-    argparser.add_argument('--working_dir', type=str, default='/scratch')
+    #argparser.add_argument('--working_dir', type=str, default='/scratch')
 
     args = argparser.parse_args()
-
-    working_dir = generate_working_dir(args.working_dir)
 
     total_size = 0
     for obj in [args.vcf_s3_path, args.bam_s3_path, args.bai_s3_path]:
@@ -66,12 +64,15 @@ def main():
        text_file.write("{0}".format(total_size))
 
     # Wait for EBS to appear
-    while not os.path.isdir("/scratch"):
+    while not os.path.isdir('/scratch'):
        time.sleep(5)
 
     # Wait for mount verification
     while not os.path.ismount('/scratch'):
        time.sleep(1)
+
+    working_dir = generate_working_dir('/scratch')
+
 
     print("Downloading vcf")
     local_vcf_path = download_file(args.vcf_s3_path, working_dir)
