@@ -20,6 +20,6 @@ COPY verifyBamID_1.1.3/verifyBamID/bin/verifyBamID /usr/local/bin/
 COPY run_verify.py /run_verify.py
 COPY common_utils /common_utils
 
-ENTRYPOINT ["python", "/run_verify.py"]
+ENTRYPOINT ["python", "-u", "/run_verify.py"]
 #CMD ["/usr/local/bin/verifyBamID", "-h"]
 

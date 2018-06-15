@@ -57,11 +57,17 @@ def main():
     for obj in [args.vcf_s3_path, args.bam_s3_path, args.bai_s3_path]:
         total_size += get_size(obj)
 
+    # add more for formatting loss
+    total_size += 2e9
+
     print("Total Size := {0}".format(total_size) )
+
 
     # Declare expected disk usage, triggers host's EBS script (ecs-ebs-manager)
     with open("/TOTAL_SIZE", "w") as text_file:
        text_file.write("{0}".format(total_size))
+
+    print("Waiting EBS")
 
     # Wait for EBS to appear
     while not os.path.isdir('/scratch'):
