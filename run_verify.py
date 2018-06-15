@@ -59,6 +59,7 @@ def main():
 
     # add more for formatting loss
     total_size += 2e9
+    total_size = int(total_size)
 
     print("Total Size := {0}".format(total_size) )
 
